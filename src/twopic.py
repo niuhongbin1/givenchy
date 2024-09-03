@@ -7,10 +7,40 @@ import save_excel
 import os
 import sys 
 import clear_dir
+import sys 
+import clear_dir
+import threading
+import time
 
+class myThread (threading.Thread):
+    def __init__(self,po):
+        threading.Thread.__init__(self)
+        # self.threadID = threadID
+        self.po = po
+        self.det = None
+    def run(self):
+        self.det = ayhet_det(self.po)
+    def get_det(self):
+        return self.det
 
+def ayhet_det(po):
+    logger.info(po+' capturing---')
+    # time.sleep(0.8)
+    nex = detail.out(po)
+    return nex
 
-
+def split_by_length(init_list, children_list_len):
+        """
+        按照长度拆分给定数组
+        :param init_list: 
+        :param children_list_len: 
+        :return:
+        """
+        list_of_groups = zip(*(iter(init_list),) * children_list_len)
+        end_list = [list(i) for i in list_of_groups]
+        count = len(init_list) % children_list_len
+        end_list.append(init_list[-count:]) if count != 0 else end_list
+        return end_list
 
 
 def pi():
@@ -32,13 +62,30 @@ def deleteSameNum(num):
 def d_du(du):
     path = du[0] + '/'+du[0][7:].replace('/','_')+'_givenchy.xlsx'
     logger.info(du[0]+' part capturing')
-    pos = get_pos.out(du[1])
+    pos0 = get_pos.out(du[1])
     lss = [['货号','价格','大小','网上是否有货','有货店量','货名',"MATERIAL","COLOR", "SIZE CHART TYPE",'DESCRIPTION','img_url']]
-    for po in pos:
-    #for po in pos[:6]:
-        logger.info(po+' capturing---')
-        lss = lss + detail.out(po)  
-        pass
+    # for po in pos0:
+    # #for po in pos0[:6]:
+    #     logger.info(po+' capturing---')
+    #     lss = lss + detail.out(po)  
+    #     pass
+    results =[ ]
+    tasks =[ ]
+    # loop = asyncio.get_event_loop()
+    poss = split_by_length(pos0,66)
+    for pos in poss:
+        for po in pos:
+            task = myThread(po)
+            task.start()
+            tasks.append(task)
+        for task in tasks:
+            task.join()
+            results.append(task.get_det())
+    
+    for i in results:
+        if i == None:
+            continue
+        lss = lss + i
     lss=deleteSameNum(lss)
     if len(lss) == 1:
         return du
