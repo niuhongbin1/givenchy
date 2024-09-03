@@ -45,10 +45,7 @@ def split_by_length(init_list, children_list_len):
         return end_list
 
 
-def pi():
-    # console = sys.stdout                		# 得到当前输出方向， 也就是控制台
-    file = open(r".\givenchy_data.txt", 'w',encoding='utf-8')
-    sys.stdout = file                   				# 重定向到文件
+                				# 重定向到文件
   
 
 
@@ -122,7 +119,7 @@ def deal_err(ers):
 
 def main():
     
-    pi()
+    
     logger.info(' 自动清空  res   文件夹 \n勿关闭窗口  输出信息已转入  data.txt\n运行完毕会自动关闭')
     clear_dir.clean_folder('../res')
     clss = classify.out()
